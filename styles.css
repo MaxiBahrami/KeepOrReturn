@@ -1,0 +1,128 @@
+/* CSS Reset using Modern Normalize */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css');
+
+/* Custom styles */
+
+/* Root Variables */
+:root {
+  --primary-color: #6200ee; /* Indigo */
+  --secondary-color: #da03c5; /* Teal */
+  --background-color: #f9f9f9;
+  --text-color: #212121;
+  --text-secondary-color: #757575;
+  --error-color: #b00020;
+  --font-family: 'Inter', sans-serif;
+}
+
+/* Reset body margin and padding */
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+  
+  /* Buttons */
+  .btn,
+  .btn-small {
+    background-color: #00796b;
+  }
+  
+  .btn:hover,
+  .btn-small:hover {
+    background-color: #004d40;
+  }
+  
+  /* Sections */
+  .store-section {
+    margin-bottom: 40px;
+  }
+  
+  .container {
+    margin-top: 40px;
+  }
+  
+  /* Cards */
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  .card-content {
+    padding: 20px;
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Input Fields */
+  .input-field {
+    margin-bottom: 20px;
+  }
+  
+  /* Table */
+  table.highlight > tbody > tr {
+    transition: background-color 0.3s;
+  }
+  
+  table.highlight > tbody > tr:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .table-cell-center {
+    text-align: center;
+  }
+  
+  /* Totals */
+  .total {
+    font-weight: bold;
+    margin-top: 20px;
+    font-size: 1.1rem;
+  }
+  
+  /* Item Actions */
+  .item-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .status-badge {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+  }
+  
+  .status-keep {
+    background-color: #4caf50; /* Green */
+  }
+  
+  .status-return {
+    background-color: #ff9800; /* Orange */
+  }
+  
+  .status-none {
+    background-color: #9e9e9e; /* Grey */
+  }
+  
+  /* Receipt Icon */
+  .receipt-icon {
+    cursor: pointer;
+  }
+  
+  /* Modals */
+  .modal {
+    max-width: 500px;
+  }
+  
+  .modal .modal-content h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+  }
+  
+  /* Dashboard */
+  #spendingChart,
+  #savingsChart {
+    max-width: 100%;
+    height: auto;
+  }  

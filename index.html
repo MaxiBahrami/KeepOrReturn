@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Purchase Tracker</title>
+    <!-- Materialize CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+      rel="stylesheet"
+    />
+    <!-- Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,500,700|Montserrat:400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap"
+  rel="stylesheet"
+/>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css"/>
+  </head>
+  <body>
+
+    
+
+<!-- Navigation Bar -->
+<nav>
+    <div class="nav-wrapper">
+      <div class="container">
+        <!-- Brand Logo -->
+        <a href="#" class="brand-logo">Purchase Tracker</a>
+        <!-- Mobile Menu Icon -->
+        <a href="#" class="sidenav-trigger" data-target="mobile-menu">
+          <i class="material-icons">menu</i>
+        </a>
+        <!-- Navigation Links -->
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="#modal-login" class="modal-trigger">Log In</a></li>
+          <li><a href="#modal-signup" class="modal-trigger">Sign Up</a></li>
+          <li><a href="#" id="logout-btn" style="display: none">Log Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+
+  
+  <!-- Mobile Navigation -->
+  <ul class="sidenav" id="mobile-menu">
+    <li><a href="#modal-login" class="modal-trigger">Log In</a></li>
+    <li><a href="#modal-signup" class="modal-trigger">Sign Up</a></li>
+    <li><a href="#" id="logout-btn-mobile" style="display: none">Log Out</a></li>
+  </ul>
+  
+
+    <!-- Main Content -->
+    <div class="container" id="main-content">
+      <!-- Add Store Section -->
+      <div class="section">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Add a New Store</span>
+            <div class="row">
+              <div class="input-field col s12 m9">
+                <input type="text" id="newStoreName" />
+                <label for="newStoreName">Store Name</label>
+              </div>
+              <div class="col s12 m3">
+                <button
+                  onclick="addStore()"
+                  class="btn waves-effect waves-light"
+                >
+                  Add Store
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stores Container -->
+      <div id="storesContainer">
+        <!-- Store sections will be dynamically added here -->
+      </div>
+
+      <!-- Overall Totals -->
+      <div class="section">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Overall Totals</span>
+            <ul class="collection">
+              <li class="collection-item">
+                Total Price: <span id="overallTotalPrice">0.00</span> kr
+              </li>
+              <li class="collection-item">
+                Total Keep Price: <span id="overallTotalKeepPrice">0.00</span> kr
+              </li>
+              <li class="collection-item">
+                Total Return Price: <span id="overallTotalReturnPrice">0.00</span> kr
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Section -->
+      <div class="section">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Dashboard</span>
+            <div class="row">
+              <div class="col s12 m6">
+                <canvas id="spendingChart"></canvas>
+              </div>
+              <div class="col s12 m6">
+                <canvas id="savingsChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modals -->
+      <!-- Sign Up Modal -->
+      <div id="modal-signup" class="modal">
+        <div class="modal-content">
+          <h4>Sign Up</h4>
+          <form id="signup-form">
+            <div class="input-field">
+              <input type="email" id="signup-email" required />
+              <label for="signup-email">Email</label>
+            </div>
+            <div class="input-field">
+              <input type="password" id="signup-password" required />
+              <label for="signup-password">Password</label>
+            </div>
+            <button class="btn waves-effect waves-light" type="submit">
+              Sign Up
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Login Modal -->
+      <div id="modal-login" class="modal">
+        <div class="modal-content">
+          <h4>Log In</h4>
+          <form id="login-form">
+            <div class="input-field">
+              <input type="email" id="login-email" required />
+              <label for="login-email">Email</label>
+            </div>
+            <div class="input-field">
+              <input type="password" id="login-password" required />
+              <label for="login-password">Password</label>
+            </div>
+            <button class="btn waves-effect waves-light">Log In</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Edit Item Modal -->
+      <div id="modal-edit-item" class="modal">
+        <div class="modal-content">
+          <h4>Edit Item</h4>
+          <form id="edit-item-form">
+            <div class="input-field">
+              <input type="text" id="edit-item-name" required />
+              <label for="edit-item-name">Item Name</label>
+            </div>
+            <div class="input-field">
+              <input type="number" id="edit-item-price" step="0.01" required />
+              <label for="edit-item-price">Price</label>
+            </div>
+            <div class="input-field">
+              <select id="edit-item-status">
+                <option value="keep">Keep</option>
+                <option value="return">Return</option>
+                <option value="none">None</option>
+              </select>
+              <label>Status</label>
+            </div>
+            <div class="input-field">
+              <input type="text" class="datepicker" id="edit-return-deadline" />
+              <label for="edit-return-deadline">Return Deadline</label>
+            </div>
+            <button class="btn waves-effect waves-light">Update Item</button>
+          </form>
+        </div>
+      </div>
+
+
+<!-- Scripts -->
+    <!-- jQuery (required for Materialize JS) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- Firebase JS SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <!-- Chart.js -->
+    <!-- Chart.js Version 2.9.4 -->
+    <!-- Latest Chart.js Version -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1"></script>
+
+
+    <!-- Custom JavaScript -->
+    <script>
+      // Your Firebase configuration (replace with your own)
+      const firebaseConfig = {
+        apiKey: "AIzaSyCdOC9ZZlArGe3xPsiH29IGjuM5CuuWfQ4",
+        authDomain: "purchasetracker-a7066.firebaseapp.com",
+
+        projectId: "purchasetracker-a7066",
+        // ... include the rest of your Firebase configuration
+        storageBucket: "purchasetracker-a7066.appspot.com",
+
+        messagingSenderId: "70559693318",
+        appId: "1:70559693318:web:0ef0582fd9049875672187",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+      const storage = firebase.storage();
+
+      let currentUser = null; // Will hold the currently logged-in user
+      let storeTotals = {}; // To keep track of totals per store
+      let allItems = []; // To keep track of all items for dashboard and filtering
+
+      // Initialize Materialize Components
+      document.addEventListener("DOMContentLoaded", function () {
+        M.AutoInit();
+
+        // Initialize Datepickers
+        var datepickers = document.querySelectorAll(".datepicker");
+        M.Datepicker.init(datepickers, {
+          format: "yyyy-mm-dd",
+          autoClose: true,
+        });
+      });
+
+      // Authentication Logic
+      // Sign Up
+      // Sign Up// Sign Up
+      document
+        .getElementById("signup-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const email = document.getElementById("signup-email").value;
+          const password = document.getElementById("signup-password").value;
+
+          auth
+            .createUserWithEmailAndPassword(email, password)
+            .then((cred) => {
+              M.Modal.getInstance(
+                document.getElementById("modal-signup")
+              ).close();
+              e.target.reset();
+              M.toast({ html: "Sign-up successful!", classes: "green" });
+            })
+            .catch((error) => {
+              console.error("Error signing up:", error);
+              M.toast({ html: error.message, classes: "red" });
+            });
+        });
+
+      // Log In
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const email = e.target["login-email"].value;
+          const password = e.target["login-password"].value;
+
+          auth
+            .signInWithEmailAndPassword(email, password)
+            .then((cred) => {
+              M.Modal.getInstance(
+                document.getElementById("modal-login")
+              ).close();
+              e.target.reset();
+            })
+            .catch((error) => {
+              console.error("Error logging in:", error);
+            });
+        });
+
+      // Log Out
+      document
+        .getElementById("logout-btn")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          auth.signOut();
+        });
+
+      // Manage UI Based on Auth State
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          console.log("User logged in:", user.email);
+          currentUser = user;
+          document.getElementById("logout-btn").style.display = "block";
+          // Hide login and signup options
+          document.querySelectorAll(".modal-trigger").forEach((el) => {
+            el.style.display = "none";
+          });
+          // Load user-specific data
+          loadStores();
+        } else {
+          console.log("User logged out");
+          currentUser = null;
+          document.getElementById("logout-btn").style.display = "none";
+          document.querySelectorAll(".modal-trigger").forEach((el) => {
+            el.style.display = "block";
+          });
+          // Clear data
+          document.getElementById("storesContainer").innerHTML = "";
+          document.getElementById("overallTotalPrice").textContent = "0.00";
+          document.getElementById("overallTotalKeepPrice").textContent = "0.00";
+          document.getElementById("overallTotalReturnPrice").textContent =
+            "0.00";
+        }
+      });
+
+      // Function to add a new store
+      function addStore() {
+        console.log("Current user in addStore:", currentUser);
+        if (!currentUser) {
+          alert("Please log in to add a store.");
+          return;
+        }
+        const storeNameInput = document.getElementById("newStoreName");
+        const storeName = storeNameInput.value.trim();
+        if (storeName) {
+          db.collection("users")
+            .doc(currentUser.uid)
+            .collection("stores")
+            .doc(storeName)
+            .set({ name: storeName })
+            .then(() => {
+              storeNameInput.value = "";
+              createStoreSection(storeName);
+            })
+            .catch((error) => {
+              console.error("Error adding store: ", error);
+            });
+        } else {
+          alert("Please enter a store name.");
+        }
+      }
+
+      // Function to create a store section in the UI
+      function createStoreSection(storeName) {
+        const container = document.getElementById("storesContainer");
+        
+
+        // Check if the store section already exists
+        if (document.getElementById(`storeSection-${storeName}`)) {
+          return;
+        }
+
+        // Store Section
+        const storeSection = document.createElement("div");
+        storeSection.className = "store-section";
+        storeSection.id = `storeSection-${storeName}`;
+
+        // Store Title
+        const storeTitle = document.createElement("h5");
+        storeTitle.className = "store-title";
+        storeTitle.textContent = storeName;
+        storeSection.appendChild(storeTitle);
+
+        // Item Form
+        const itemForm = document.createElement("form");
+        itemForm.className = "add-item-form";
+        itemForm.id = `itemForm-${storeName}`;
+        itemForm.innerHTML = `
+                <div class="input-field">
+                    <input type="text" name="itemName" required>
+                    <label>Item Name</label>
+                </div>
+                <div class="input-field">
+                    <input type="number" name="itemPrice" step="0.01" required>
+                    <label>Price</label>
+                </div>
+                <div class="input-field">
+                    <select name="itemStatus">
+                        <option value="keep">Keep</option>
+                        <option value="return">Return</option>
+                        <option value="none">None</option>
+                    </select>
+                    <label>Status</label>
+                </div>
+                <div class="input-field">
+                    <input type="text" class="datepicker" name="returnDeadline" />
+                    <label>Return Deadline</label>
+                </div>
+                <div class="file-field input-field">
+                    <div class="btn">
+                        <span>Receipt</span>
+                        <input type="file" name="receiptUpload" />
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" placeholder="Upload receipt" />
+                    </div>
+                </div>
+                <button type="submit" class="btn waves-effect waves-light">Add Item</button>
+            `;
+        storeSection.appendChild(itemForm);
+
+        // Items Table
+        const table = document.createElement("table");
+        table.className = "highlight responsive-table";
+        table.id = `itemsTable-${storeName}`;
+        table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Return By</th>
+                        <th>Receipt</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsBody-${storeName}">
+                    <!-- Items will appear here -->
+                </tbody>
+            `;
+        storeSection.appendChild(table);
+
+        // Total Prices
+        const totalDiv = document.createElement("div");
+        totalDiv.className = "total";
+        totalDiv.innerHTML = `
+                Total Price: <span id="totalPrice-${storeName}">0.00</span> kr<br>
+                Total Keep Price: <span id="totalKeepPrice-${storeName}">0.00</span> kr<br>
+                Total Return Price: <span id="totalReturnPrice-${storeName}">0.00</span> kr
+            `;
+        storeSection.appendChild(totalDiv);
+
+        container.appendChild(storeSection);
+
+        // Initialize Materialize Components in the new elements
+        M.FormSelect.init(itemForm.querySelectorAll("select"));
+        M.Datepicker.init(itemForm.querySelectorAll(".datepicker"), {
+          format: "yyyy-mm-dd",
+          autoClose: true,
+        });
+
+        // Event Listener for the item form
+        itemForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const itemName = itemForm.itemName.value.trim();
+          const itemPrice = parseFloat(itemForm.itemPrice.value);
+          const itemStatus = itemForm.itemStatus.value;
+          const returnDeadline = itemForm.returnDeadline.value;
+          const receiptFile = itemForm.receiptUpload.files[0];
+
+          if (itemName && !isNaN(itemPrice)) {
+            const item = {
+              name: itemName,
+              price: itemPrice,
+              status: itemStatus,
+              returnDeadline: returnDeadline
+                ? firebase.firestore.Timestamp.fromDate(
+                    new Date(returnDeadline)
+                  )
+                : null,
+              receiptURL: null,
+            };
+
+            const saveItemToFirestore = (itemData) => {
+              db.collection("users")
+                .doc(currentUser.uid)
+                .collection("stores")
+                .doc(storeName)
+                .collection("items")
+                .add(itemData)
+                .then(() => {
+                  itemForm.reset();
+                  M.updateTextFields();
+                })
+                .catch((error) => {
+                  console.error("Error adding item: ", error);
+                });
+            };
+
+            if (receiptFile) {
+              const storageRef = storage.ref();
+              const receiptRef = storageRef.child(
+                `receipts/${currentUser.uid}/${Date.now()}_${receiptFile.name}`
+              );
+              receiptRef
+                .put(receiptFile)
+                .then((snapshot) => {
+                  snapshot.ref.getDownloadURL().then((url) => {
+                    item.receiptURL = url;
+                    saveItemToFirestore(item);
+                  });
+                })
+                .catch((error) => {
+                  console.error("Error uploading receipt: ", error);
+                  saveItemToFirestore(item); // Save item without receipt URL
+                });
+            } else {
+              saveItemToFirestore(item);
+            }
+          } else {
+            alert("Please fill in all fields correctly.");
+          }
+        });
+
+        // Real-time listener for items in this store
+        db.collection("users")
+          .doc(currentUser.uid)
+          .collection("stores")
+          .doc(storeName)
+          .collection("items")
+          .onSnapshot((snapshot) => {
+            const itemsBody = document.getElementById(`itemsBody-${storeName}`);
+            itemsBody.innerHTML = "";
+            let totalPrice = 0;
+            let totalKeepPrice = 0;
+            let totalReturnPrice = 0;
+
+            snapshot.forEach((doc) => {
+              const item = doc.data();
+              const itemId = doc.id;
+
+              const row = document.createElement("tr");
+
+              // Status selection
+              const statusCell = document.createElement("td");
+
+              // Create a wrapper div with class 'input-field'
+              const inputFieldDiv = document.createElement("div");
+              inputFieldDiv.className = "input-field";
+
+              // Create the select element
+              const statusSelect = document.createElement("select");
+              statusSelect.className = "status-select";
+
+              // Populate options
+              const statuses = ["keep", "return", "none"];
+              statuses.forEach((statusOption) => {
+                const option = document.createElement("option");
+                option.value = statusOption;
+                option.textContent =
+                  statusOption.charAt(0).toUpperCase() + statusOption.slice(1);
+                if (item.status === statusOption) {
+                  option.selected = true;
+                }
+                statusSelect.appendChild(option);
+              });
+
+              // Create a label for the select element
+              const statusLabel = document.createElement("label");
+              statusLabel.textContent = "Status";
+
+              // Append the select and label to the wrapper div
+              inputFieldDiv.appendChild(statusSelect);
+              inputFieldDiv.appendChild(statusLabel);
+
+              // Append the wrapper div to the cell
+              statusCell.appendChild(inputFieldDiv);
+              row.appendChild(statusCell);
+
+              // Append the row to the table body
+              itemsBody.appendChild(row);
+
+              // Initialize the select after it is in the DOM
+              M.FormSelect.init(statusSelect);
+
+              // Item name
+              const nameCell = document.createElement("td");
+              nameCell.textContent = item.name;
+              row.appendChild(nameCell);
+
+              // Price
+              const priceCell = document.createElement("td");
+              priceCell.textContent = item.price.toFixed(2);
+              row.appendChild(priceCell);
+
+              // Return Deadline
+              const deadlineCell = document.createElement("td");
+              if (item.returnDeadline) {
+                const date = item.returnDeadline.toDate();
+                deadlineCell.textContent = date.toISOString().split("T")[0];
+              } else {
+                deadlineCell.textContent = "-";
+              }
+              row.appendChild(deadlineCell);
+
+              // Receipt
+              const receiptCell = document.createElement("td");
+              if (item.receiptURL) {
+                const receiptLink = document.createElement("a");
+                receiptLink.href = item.receiptURL;
+                receiptLink.target = "_blank";
+                receiptLink.innerHTML =
+                  '<i class="material-icons receipt-icon">receipt</i>';
+                receiptCell.appendChild(receiptLink);
+              } else {
+                receiptCell.textContent = "-";
+              }
+              row.appendChild(receiptCell);
+
+              // Actions
+              const actionsCell = document.createElement("td");
+              actionsCell.className = "item-actions";
+
+              // Edit Button
+              const editButton = document.createElement("button");
+              editButton.className = "btn-small waves-effect waves-light";
+              editButton.innerHTML = '<i class="material-icons">edit</i>';
+              editButton.addEventListener("click", function () {
+                openEditItemModal(storeName, itemId, item);
+              });
+              actionsCell.appendChild(editButton);
+
+              // Remove Button
+              const removeButton = document.createElement("button");
+              removeButton.className = "btn-small red waves-effect waves-light";
+              removeButton.innerHTML = '<i class="material-icons">delete</i>';
+              removeButton.addEventListener("click", function () {
+                db.collection("users")
+                  .doc(currentUser.uid)
+                  .collection("stores")
+                  .doc(storeName)
+                  .collection("items")
+                  .doc(itemId)
+                  .delete()
+                  .catch((error) => {
+                    console.error("Error removing item: ", error);
+                  });
+              });
+              actionsCell.appendChild(removeButton);
+
+              row.appendChild(actionsCell);
+
+              itemsBody.appendChild(row);
+
+              totalPrice += item.price;
+
+              if (item.status === "keep") {
+                totalKeepPrice += item.price;
+              } else if (item.status === "return") {
+                totalReturnPrice += item.price;
+              }
+
+              // Add item to allItems array for dashboard and filtering
+              allItems.push({
+                ...item,
+                storeName,
+                itemId,
+              });
+            });
+
+            document.getElementById(`totalPrice-${storeName}`).textContent =
+              totalPrice.toFixed(2);
+            document.getElementById(`totalKeepPrice-${storeName}`).textContent =
+              totalKeepPrice.toFixed(2);
+            document.getElementById(
+              `totalReturnPrice-${storeName}`
+            ).textContent = totalReturnPrice.toFixed(2);
+
+            // Update the storeTotals object
+            storeTotals[storeName] = {
+              totalPrice,
+              totalKeepPrice,
+              totalReturnPrice,
+            };
+
+            // Update the overall totals
+            updateOverallTotals();
+
+            // Render Dashboard Charts
+            renderDashboard();
+          });
+      }
+
+      // Function to open the Edit Item Modal
+      let currentEditItem = null; // To keep track of the item being edited
+
+      function openEditItemModal(storeName, itemId, itemData) {
+        currentEditItem = {
+          storeName,
+          itemId,
+        };
+        const editForm = document.getElementById("edit-item-form");
+        editForm["edit-item-name"].value = itemData.name;
+        editForm["edit-item-price"].value = itemData.price;
+        editForm["edit-item-status"].value = itemData.status;
+        if (itemData.returnDeadline) {
+          const date = itemData.returnDeadline.toDate();
+          editForm["edit-return-deadline"].value = date
+            .toISOString()
+            .split("T")[0];
+        } else {
+          editForm["edit-return-deadline"].value = "";
+        }
+        M.updateTextFields();
+        M.FormSelect.init(editForm.querySelectorAll("select"));
+        M.Datepicker.init(editForm.querySelectorAll(".datepicker"), {
+          format: "yyyy-mm-dd",
+          autoClose: true,
+        });
+        const editModal = document.getElementById("modal-edit-item");
+        M.Modal.getInstance(editModal).open();
+      }
+
+      // Handle Edit Item Form Submission
+      document
+        .getElementById("edit-item-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const editForm = e.target;
+          const itemName = editForm["edit-item-name"].value.trim();
+          const itemPrice = parseFloat(editForm["edit-item-price"].value);
+          const itemStatus = editForm["edit-item-status"].value;
+          const returnDeadline = editForm["edit-return-deadline"].value;
+
+          if (itemName && !isNaN(itemPrice)) {
+            const itemUpdates = {
+              name: itemName,
+              price: itemPrice,
+              status: itemStatus,
+              returnDeadline: returnDeadline
+                ? firebase.firestore.Timestamp.fromDate(
+                    new Date(returnDeadline)
+                  )
+                : null,
+            };
+
+            db.collection("users")
+              .doc(currentUser.uid)
+              .collection("stores")
+              .doc(currentEditItem.storeName)
+              .collection("items")
+              .doc(currentEditItem.itemId)
+              .update(itemUpdates)
+              .then(() => {
+                M.Modal.getInstance(
+                  document.getElementById("modal-edit-item")
+                ).close();
+                editForm.reset();
+              })
+              .catch((error) => {
+                console.error("Error updating item: ", error);
+              });
+          } else {
+            alert("Please fill in all fields correctly.");
+          }
+        });
+
+      // Load existing stores on page load
+      function loadStores() {
+        if (!currentUser) return;
+        db.collection("users")
+          .doc(currentUser.uid)
+          .collection("stores")
+          .get()
+          .then((snapshot) => {
+            snapshot.forEach((doc) => {
+              createStoreSection(doc.id);
+            });
+          })
+          .catch((error) => {
+            console.error("Error loading stores: ", error);
+          });
+      }
+
+      // Function to update overall totals
+      function updateOverallTotals() {
+        let totalPrice = 0;
+        let totalKeepPrice = 0;
+        let totalReturnPrice = 0;
+
+        for (const store in storeTotals) {
+          totalPrice += storeTotals[store].totalPrice;
+          totalKeepPrice += storeTotals[store].totalKeepPrice;
+          totalReturnPrice += storeTotals[store].totalReturnPrice;
+        }
+
+        document.getElementById("overallTotalPrice").textContent =
+          totalPrice.toFixed(2);
+        document.getElementById("overallTotalKeepPrice").textContent =
+          totalKeepPrice.toFixed(2);
+        document.getElementById("overallTotalReturnPrice").textContent =
+          totalReturnPrice.toFixed(2);
+      }
+
+      // Render Dashboard Charts
+      function renderDashboard() {
+        // Collect data from storeTotals
+        const labels = Object.keys(storeTotals);
+        const spendingData = labels.map(
+          (store) => storeTotals[store].totalPrice
+        );
+        const keepData = labels.map(
+          (store) => storeTotals[store].totalKeepPrice
+        );
+        const returnData = labels.map(
+          (store) => storeTotals[store].totalReturnPrice
+        );
+
+        console.log('Labels:', labels);
+  console.log('Spending Data:', spendingData);
+  console.log('Keep Data:', keepData);
+  console.log('Return Data:', returnData);
+
+        // Spending Chart
+        const ctx1 = document.getElementById("spendingChart").getContext("2d");
+        new Chart(ctx1, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Total Spending",
+                data: spendingData,
+                backgroundColor: "rgba(0, 150, 136, 0.7)",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+
+        // Savings Chart
+        const ctx2 = document.getElementById("savingsChart").getContext("2d");
+        new Chart(ctx2, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Total Keep Price",
+                data: keepData,
+                backgroundColor: "rgba(76, 175, 80, 0.7)",
+              },
+              {
+                label: "Total Return Price",
+                data: returnData,
+                backgroundColor: "rgba(255, 193, 7, 0.7)",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+
+      // Initialize the app
+      window.onload = function () {
+        // Authentication state is handled in the auth.onAuthStateChanged listener
+      };
+    </script>
+  </body>
+</html>
